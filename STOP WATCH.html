@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stop the Time</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #dbeafe, #fce7f3);
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.6s ease;
+    }
+
+    .page {
+      display: none;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      padding: 3rem 4rem;
+      border-radius: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      color: #374151;
+      margin-bottom: 2rem;
+      letter-spacing: 3px;
+    }
+
+    .enter-btn, button {
+      background: #e0e7ff;
+      color: #4338ca;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 1rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    .enter-btn:hover, button:hover {
+      background: #c7d2fe;
+      transform: translateY(-3px);
+    }
+
+    /* Stopwatch page styles */
+    .time {
+      font-size: 3.5rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #374151;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .start {
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+
+    .start:hover {
+      background: #c7d2fe;
+    }
+
+    .reset {
+      background: #ffe4e6;
+      color: #be123c;
+    }
+
+    .reset:hover {
+      background: #fecdd3;
+    }
+  </style>
+</head>
+<body>
+  <!-- Front Page -->
+  <div class="page active" id="frontPage">
+    <h1>Stop the Time</h1>
+    <button class="enter-btn" onclick="showStopwatch()">Enter</button>
+  </div>
+
+  <!-- Stopwatch Page -->
+  <div class="page" id="stopwatchPage">
+    <div class="time" id="display">00:00.00</div>
+    <div class="buttons">
+      <button class="start" id="startBtn">Start</button>
+      <button class="reset" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let time = 0;
+    let running = false;
+    let interval;
+
+    const frontPage = document.getElementById("frontPage");
+    const stopwatchPage = document.getElementById("stopwatchPage");
+    const display = document.getElementById("display");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function showStopwatch() {
+      frontPage.classList.remove("active");
+      stopwatchPage.classList.add("active");
+      document.body.style.background = "linear-gradient(135deg, #eef2ff, #ffe4f0)";
+    }
+
+    function formatTime(ms) {
+      const minutes = String(Math.floor(ms / 60000)).padStart(2, "0");
+      const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, "0");
+      const centiseconds = String(Math.floor((ms % 1000) / 10)).padStart(2, "0");
+      return `${minutes}:${seconds}.${centiseconds}`;
+    }
+
+    function updateDisplay() {
+      display.textContent = formatTime(time);
+    }
+
+    startBtn.addEventListener("click", () => {
+      if (!running) {
+        running = true;
+        startBtn.textContent = "Pause";
+        interval = setInterval(() => {
+          time += 10;
+          updateDisplay();
+        }, 10);
+      } else {
+        running = false;
+        startBtn.textContent = "Start";
+        clearInterval(interval);
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      running = false;
+      clearInterval(interval);
+      time = 0;
+      updateDisplay();
+      startBtn.textContent = "Start";
+    });
+  </script>
+</body>
+</html>
